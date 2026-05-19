@@ -245,11 +245,6 @@
       </div>
 
       <div class="field">
-        <label for="email">Email address</label>
-        <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
-      </div>
-
-      <div class="field">
         <label for="org">Organisation <span style="font-weight:400;color:#A0AEC0">(optional)</span></label>
         <input type="text" id="org" placeholder="Your institution or company" />
       </div>
@@ -295,12 +290,6 @@
 
     if (!name || !email) {
       msg.textContent = 'Please enter both your name and email address.';
-      msg.className = 'message error';
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      msg.textContent = 'Please enter a valid email address.';
       msg.className = 'message error';
       return;
     }
