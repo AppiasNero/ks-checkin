@@ -51,7 +51,7 @@
     box-shadow: 0 4px 24px rgba(0,62,114,0.07);
   }
 
-.card-header {
+  .card-header {
     background: url('AI_top_2.png') center/cover no-repeat;
     padding: 2rem 2rem 1.75rem;
     text-align: center;
@@ -91,8 +91,7 @@
     letter-spacing: 0.02em;
   }
 
-  input[type="text"],
-  input[type="email"] {
+  input[type="text"] {
     width: 100%;
     height: 48px;
     border: 1.5px solid var(--border);
@@ -107,14 +106,12 @@
     -webkit-appearance: none;
   }
 
-  input[type="text"]:focus,
-  input[type="email"]:focus {
+  input[type="text"]:focus {
     border-color: var(--blue-mid);
     box-shadow: 0 0 0 3px rgba(0,102,179,0.12);
   }
 
-  input[type="text"]::placeholder,
-  input[type="email"]::placeholder { color: #A0AEC0; }
+  input[type="text"]::placeholder { color: #A0AEC0; }
 
   .btn {
     width: 100%;
@@ -237,7 +234,7 @@
   <div class="card-body">
     <div class="form-content" id="formContent">
       <span class="badge">Event Check-In</span>
-      <p class="welcome-text">Welcome! Please enter your name and email address to register your arrival.</p>
+      <p class="welcome-text">Welcome! Please enter your name to register your arrival.</p>
 
       <div class="field">
         <label for="name">Full name</label>
@@ -278,7 +275,6 @@
 
   async function handleCheckin() {
     const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
     const org = document.getElementById('org').value.trim();
     const btn = document.getElementById('checkinBtn');
     const msg = document.getElementById('message');
@@ -288,8 +284,8 @@
     msg.className = 'message';
     msg.style.display = 'none';
 
-    if (!name || !email) {
-      msg.textContent = 'Please enter both your name and email address.';
+    if (!name) {
+      msg.textContent = 'Please enter your name.';
       msg.className = 'message error';
       return;
     }
@@ -303,7 +299,7 @@
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, org, timestamp: new Date().toISOString() })
+        body: JSON.stringify({ name, org, timestamp: new Date().toISOString() })
       });
 
       document.getElementById('formContent').classList.add('hidden');
