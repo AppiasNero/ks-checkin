@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Check-In — Karolinska University Hospital</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-deep: #003E72;
+    --blue-mid: #0066B3;
+    --blue-light: #E6F1FB;
+    --blue-accent: #005CA8;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --text-primary: #1A1A1A;
+    --text-secondary: #4A5568;
+    --text-muted: #718096;
+    --border: #E2E8F0;
+    --bg: #F8FAFC;
+    --white: #FFFFFF;
+    --success-bg: #E1F5EE;
+    --success-text: #0F6E56;
+    --error-bg: #FCEBEB;
+    --error-text: #A32D2D;
+    --radius: 12px;
+    --radius-lg: 20px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.25rem;
+    color: var(--text-primary);
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 480px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,62,114,0.07);
+  }
+
+  .card-header {
+    background: var(--blue-deep);
+    padding: 2rem 2rem 1.75rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-mark svg { display: block; }
+
+  .logo-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: left;
+    line-height: 1.3;
+  }
+
+  .event-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: #FFFFFF;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+
+  .event-meta {
+    font-size: 13px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 400;
+  }
+
+  .card-body {
+    padding: 2rem;
+  }
+
+  .welcome-text {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 1.75rem;
+    line-height: 1.6;
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  input[type="text"],
+  input[type="email"] {
+    width: 100%;
+    height: 48px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text-primary);
+    background: var(--white);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  input[type="text"]:focus,
+  input[type="email"]:focus {
+    border-color: var(--blue-mid);
+    box-shadow: 0 0 0 3px rgba(0,102,179,0.12);
+  }
+
+  input[type="text"]::placeholder,
+  input[type="email"]::placeholder {
+    color: #A0AEC0;
+  }
+
+  .btn {
+    width: 100%;
+    height: 52px;
+    background: var(--blue-mid);
+    color: #FFFFFF;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: 0.01em;
+  }
+
+  .btn:hover { background: var(--blue-accent); }
+  .btn:active { transform: scale(0.985); }
+  .btn:disabled { background: #A0AEC0; cursor: not-allowed; transform: none; }
+
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .message {
+    display: none;
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-size: 14px;
+    margin-top: 1rem;
+    line-height: 1.5;
+  }
+
+  .message.success {
+    background: var(--success-bg);
+    color: var(--success-text);
+    display: block;
+  }
+
+  .message.error {
+    background: var(--error-bg);
+    color: var(--error-text);
+    display: block;
+  }
+
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .success-screen.visible { display: block; }
+  .form-content.hidden { display: none; }
+
+  .check-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--success-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+  }
+
+  .success-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .success-sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--blue-light);
+    color: var(--blue-mid);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <div class="event-title">Nordic Conference on AI<br>in University Hospitals</div>
+    <div class="event-meta">August 25–26, 2026 · Karolinska University Hospital, Solna</div>
+  </div>
+
+  <div class="card-body">
+    <div class="form-content" id="formContent">
+      <span class="badge">Event Check-In</span>
+      <p class="welcome-text">Welcome! Please enter your name and email address to register your arrival.</p>
+
+      <div class="field">
+        <label for="name">Full name</label>
+        <input type="text" id="name" placeholder="e.g. Anna Lindström" autocomplete="name" />
+      </div>
+
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+
+      <div class="field">
+        <label for="org">Organisation <span style="font-weight:400;color:#A0AEC0">(optional)</span></label>
+        <input type="text" id="org" placeholder="Your institution or company" />
+      </div>
+
+      <button class="btn" id="checkinBtn" onclick="handleCheckin()">
+        <span id="btnText">Check in</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+
+      <div class="message" id="message"></div>
+    </div>
+
+    <div class="success-screen" id="successScreen">
+      <div class="check-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <path d="M6 14l6 6 10-11" stroke="#0F6E56" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="success-name" id="successName">Welcome!</div>
+      <p class="success-sub">You're checked in.<br>Enjoy the symposium.</p>
+      <div class="divider"></div>
+      <p style="font-size:13px; color:var(--text-muted);">Nordic Conference on AI in University Hospitals<br>August 25–26, 2026 · Karolinska, Solna</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Karolinska University Hospital · <a href="https://www.karolinskahospital.com/international-collaborations/events-and-visits/karolinska-events/nordic-conference-on-ai-in-university-hospitals/" style="color: var(--text-muted); text-decoration: underline;">Event page</a></div>
+
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzW9iCsmNOSqlxcKfdRujE9fLLTqurtblmPbsDZMpesQaw-Rjd3Hxug3TGb2UX6QuQivg/exec';
+
+  async function handleCheckin() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const org = document.getElementById('org').value.trim();
+    const btn = document.getElementById('checkinBtn');
+    const msg = document.getElementById('message');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+
+    msg.className = 'message';
+    msg.style.display = 'none';
+
+    if (!name || !email) {
+      msg.textContent = 'Please enter both your name and email address.';
+      msg.className = 'message error';
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msg.textContent = 'Please enter a valid email address.';
+      msg.className = 'message error';
+      return;
+    }
+
+    btn.disabled = true;
+    btnText.textContent = 'Checking in…';
+    spinner.style.display = 'block';
+
+    try {
+      if (SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, org, timestamp: new Date().toISOString() })
+        });
+      }
+
+      document.getElementById('formContent').classList.add('hidden');
+      document.getElementById('successName').textContent = 'Welcome, ' + name.split(' ')[0] + '!';
+      document.getElementById('successScreen').classList.add('visible');
+
+    } catch (err) {
+      btn.disabled = false;
+      btnText.textContent = 'Check in';
+      spinner.style.display = 'none';
+      msg.textContent = 'Something went wrong. Please try again or speak to a team member.';
+      msg.className = 'message error';
+    }
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleCheckin();
+  });
+</script>
+
+</body>
+</html>
